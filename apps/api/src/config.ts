@@ -16,6 +16,18 @@ export interface ApiConfig {
     templateId?: string;
     environment: string;
   };
+  vault: {
+    /** "s3" when S3_BUCKET is configured, otherwise local filesystem. */
+    driver: "local" | "s3";
+    localDir: string;
+    s3?: {
+      endpoint?: string;
+      region: string;
+      bucket: string;
+      accessKeyId: string;
+      secretAccessKey: string;
+    };
+  };
 }
 
 export async function loadConfig(
@@ -38,5 +50,27 @@ export async function loadConfig(
       templateId: env["PERSONA_TEMPLATE_ID"],
       environment: env["PERSONA_ENVIRONMENT"] ?? "sandbox",
     },
+    vault: await loadVaultConfig(secrets, env),
   };
+}
+
+async function loadVaultConfig(
+  secrets: SecretsProvider,
+  env: Record<string, string | undefined>,
+): Promise<ApiConfig["vault"]> {
+  const bucket = await secrets.getOptional("S3_BUCKET");
+  if (bucket) {
+    return {
+      driver: "s3",
+      localDir: env["VAULT_STORAGE_DIR"] ?? "./vault-data",
+      s3: {
+        endpoint: await secrets.getOptional("S3_ENDPOINT"),
+        region: env["S3_REGION"] ?? "us-east-1",
+        bucket,
+        accessKeyId: await secrets.get("S3_ACCESS_KEY_ID"),
+        secretAccessKey: await secrets.get("S3_SECRET_ACCESS_KEY"),
+      },
+    };
+  }
+  return { driver: "local", localDir: env["VAULT_STORAGE_DIR"] ?? "./vault-data" };
 }

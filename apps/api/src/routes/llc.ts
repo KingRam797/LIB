@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import type { FastifyInstance, FastifyReply } from "fastify";
 import { z } from "zod";
 import { appendAudit } from "../audit.js";
+import { ensureLlcEvents } from "../calendar/events.js";
 import { llcProfiles } from "../db/schema.js";
 import {
   articlesOfOrganization,
@@ -102,6 +103,9 @@ export async function llcRoutes(app: FastifyInstance, ctx: AppContext): Promise<
       return row!;
     });
     if (parsed.data.formedOn) {
+      // T4.3 — recording the LARA filing date auto-populates the compliance
+      // calendar (MI Annual Statement + estimated-tax deadlines).
+      await db.withUserDb(userId, (tx) => ensureLlcEvents(tx, userId, parsed.data.formedOn!));
       await appendAudit(db.pool, {
         actorUserId: userId,
         action: "llc.formed_recorded",

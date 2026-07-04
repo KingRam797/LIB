@@ -12,6 +12,10 @@
 - **2026-07-03** — Phase 0 complete, Phase 1 complete (T1.1–T1.6). 17 integration tests +
   8 unit tests green against real Postgres 16; live server boot verified (register →
   login → /me over HTTP, security headers confirmed).
+- **2026-07-04** — Phases 2, 3, and 4 complete. 58 tests green (50 API integration +
+  8 unit). Full live HTTP journey verified: onboarding → lessons → budget → LLC name
+  check → Articles PDF → auto-populated calendar + fired reminders → encrypted vault
+  round-trip (plaintext confirmed absent on disk) → data export. **MVP complete.**
 
 ## Phase 0 — Foundation & Scaffolding
 
@@ -91,12 +95,34 @@
 
 **Phase 3 deployable milestone reached.**
 
-## Next up (Phase 4 — Document Vault + Compliance Calendar)
+## Phase 4 — Document Vault + Compliance Calendar
 
-- [ ] **T4.1** Encrypted document vault (storage abstraction, AES-256, per-user isolation)
-- [ ] **T4.2** Document classification/tagging + search
-- [ ] **T4.3** Compliance calendar (MI Annual Statement Feb 15 etc.; reminders fire)
-- [ ] **T4.4** Audit export + data-subject access/delete (CCPA-ready)
+- [x] **T4.1** Encrypted vault — BlobStorage abstraction with LocalFsStorage (dev/test)
+      and S3Storage via @aws-sdk/client-s3 (works with DO Spaces/AWS/MinIO; wire by
+      setting S3_BUCKET). Files AES-256-GCM-encrypted app-side with a per-user
+      HKDF-derived key BEFORE storage. AC tested: byte-exact round-trip, ciphertext-only
+      at rest, cross-user download → 404, delete removes row + blob.
+      *Note: S3Storage driver is untested against a live endpoint (no S3 reachable in
+      this sandbox) — smoke-test with MinIO or DO Spaces before production.*
+- [x] **T4.2** Classification (6 categories) + tags + search by category/tag/filename;
+      PATCH re-categorization. All tested.
+- [x] **T4.3** Compliance calendar — recording the LLC `formedOn` date auto-populates
+      MI Annual Statements (Feb 15; formed-after-Sept-30 skip rule tested) + next 4
+      federal estimated-tax dates. Reminders fire as persisted notification rows
+      (idempotent), surfaced in the calendar page. All tested.
+- [x] **T4.4** GET /me/export returns every user data section + retained audit trail;
+      POST /me/delete (password + MFA step-up) removes vault blobs and cascades all DB
+      rows; deletion itself is audit-logged. Audit entries are retained by design as
+      GLBA security records (disclosed in export). All tested.
+
+**Phase 4 deployable milestone reached — COMPLETE MVP: compliant, deployable one-stop
+toolkit with zero fund custody, before any wallet feature.**
+
+## Post-MVP (blocked on King's decisions — see spec)
+
+- Stablecoin wallet via licensed partner (Zero Hash / Bridge + Privy/Circle) — requires
+  vendor selection, legal opinion on pure-software posture, partner API keys.
+- Property investment hub, social/marketing engine, advisor marketplace.
 
 ## How to run
 

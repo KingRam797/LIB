@@ -199,6 +199,59 @@ export const llcProfiles = pgTable("llc_profiles", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const documents = pgTable(
+  "documents",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    filename: text("filename").notNull(),
+    contentType: text("content_type").notNull(),
+    sizeBytes: integer("size_bytes").notNull(),
+    category: text("category", {
+      enum: ["articles", "ein_letter", "operating_agreement", "tax", "identity", "other"],
+    })
+      .notNull()
+      .default("other"),
+    tags: text("tags").array().notNull().default([]),
+    storageKey: text("storage_key").notNull().unique(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("documents_user_idx").on(t.userId)],
+);
+
+export const complianceEvents = pgTable(
+  "compliance_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull(),
+    title: text("title").notNull(),
+    description: text("description").notNull().default(""),
+    dueOn: date("due_on").notNull(),
+    source: text("source", { enum: ["llc", "system", "manual"] }).notNull().default("llc"),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("compliance_events_user_due_idx").on(t.userId, t.dueOn)],
+);
+
+export const notifications = pgTable("notifications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  eventId: uuid("event_id")
+    .notNull()
+    .references(() => complianceEvents.id, { onDelete: "cascade" }),
+  message: text("message").notNull(),
+  firedAt: timestamp("fired_at", { withTimezone: true }).notNull().defaultNow(),
+  readAt: timestamp("read_at", { withTimezone: true }),
+});
+
 export const auditLog = pgTable("audit_log", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
   occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull().defaultNow(),

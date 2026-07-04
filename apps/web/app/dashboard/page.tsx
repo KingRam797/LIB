@@ -96,6 +96,52 @@ export default function DashboardPage() {
       >
         Sign out
       </button>
+
+      <h2 style={{ marginTop: "2rem", fontSize: "1rem" }}>Your data</h2>
+      <button
+        onClick={async () => {
+          const session = loadSession();
+          if (!session) return;
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"}/me/export`,
+            { headers: { Authorization: `Bearer ${session.accessToken}` } },
+          );
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "spendwhere-export.json";
+          a.click();
+          URL.revokeObjectURL(url);
+        }}
+        style={{ marginRight: "0.5rem", padding: "0.4rem 1rem", borderRadius: 6, border: "1px solid #2a4a3a", background: "transparent", color: "#9db8ab" }}
+      >
+        Export my data
+      </button>
+      <button
+        onClick={async () => {
+          const session = loadSession();
+          if (!session) return;
+          const password = prompt(
+            "Deleting your account removes all your data permanently. Enter your password to confirm:",
+          );
+          if (!password) return;
+          try {
+            await api("/me/delete", {
+              method: "POST",
+              token: session.accessToken,
+              body: { password },
+            });
+            clearSession();
+            window.location.href = "/";
+          } catch (err) {
+            setNotice((err as Error).message);
+          }
+        }}
+        style={{ padding: "0.4rem 1rem", borderRadius: 6, border: "1px solid #4a2a2a", background: "transparent", color: "#ff8080" }}
+      >
+        Delete my account
+      </button>
     </main>
   );
 }

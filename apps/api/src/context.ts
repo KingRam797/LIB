@@ -8,6 +8,8 @@ export interface AppContext {
   config: ApiConfig;
   db: DbHandle;
   kyc: KycClient;
+  /** Vault blob storage; defaults from config when omitted. */
+  storage?: import("./vault/storage.js").BlobStorage;
 }
 
 type UserRow = typeof users.$inferSelect;

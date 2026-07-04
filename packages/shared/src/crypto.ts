@@ -11,7 +11,13 @@
  * The version prefix allows future key rotation / algorithm migration.
  */
 
-import { createCipheriv, createDecipheriv, randomBytes, timingSafeEqual } from "node:crypto";
+import {
+  createCipheriv,
+  createDecipheriv,
+  hkdfSync,
+  randomBytes,
+  timingSafeEqual,
+} from "node:crypto";
 
 const VERSION = "v1";
 const IV_LENGTH = 12; // GCM standard nonce size
@@ -56,6 +62,35 @@ export function decryptField(encoded: string, key: Buffer): string {
 
 export function isEncryptedField(value: string): boolean {
   return value.startsWith(`${VERSION}:`);
+}
+
+/**
+ * Binary variants for the document vault (T4.1). Output layout:
+ * [12-byte IV][ciphertext][16-byte auth tag]. Encrypted with a per-user
+ * key derived below, so one user's key can never open another's blobs.
+ */
+export function encryptBytes(plaintext: Buffer, key: Buffer): Buffer {
+  const iv = randomBytes(IV_LENGTH);
+  const cipher = createCipheriv("aes-256-gcm", key, iv);
+  const ciphertext = Buffer.concat([cipher.update(plaintext), cipher.final()]);
+  return Buffer.concat([iv, ciphertext, cipher.getAuthTag()]);
+}
+
+export function decryptBytes(blob: Buffer, key: Buffer): Buffer {
+  if (blob.length < IV_LENGTH + AUTH_TAG_LENGTH) {
+    throw new Error("Malformed encrypted blob");
+  }
+  const iv = blob.subarray(0, IV_LENGTH);
+  const authTag = blob.subarray(blob.length - AUTH_TAG_LENGTH);
+  const ciphertext = blob.subarray(IV_LENGTH, blob.length - AUTH_TAG_LENGTH);
+  const decipher = createDecipheriv("aes-256-gcm", key, iv);
+  decipher.setAuthTag(authTag);
+  return Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+}
+
+/** HKDF-SHA256 per-user key derivation from the master field key. */
+export function deriveUserKey(masterKey: Buffer, userId: string, info = "vault"): Buffer {
+  return Buffer.from(hkdfSync("sha256", masterKey, Buffer.from(userId), Buffer.from(info), 32));
 }
 
 /** Constant-time string comparison for tokens/OTPs. */
