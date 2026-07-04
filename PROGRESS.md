@@ -58,12 +58,27 @@
 
 **Phase 1 deployable milestone reached: authenticated, MFA-capable, KYC-gated app shell.**
 
-## Next up (Phase 2 — Onboarding + Financial Literacy)
+## Phase 2 — Onboarding + Financial Literacy
 
-- [ ] **T2.1** Onboarding wizard (persona: non-W2/gig/creator; income band $30K–$3M) — resumable profile
-- [ ] **T2.2** Financial literacy module framework (content model + progress tracking)
-- [ ] **T2.3** Investment scheduling stubs (UI + data model only; NO fund movement — bright line)
-- [ ] **T2.4** Budgeting/tax dashboard v1 (manual/imported data, read-only calculations)
+- [x] **T2.1** Onboarding wizard — persona/income-band/state/goals, saved per step,
+      resumable via `currentStep` (tested: partial save survives; earlier answers kept).
+- [x] **T2.2** Literacy framework — lessons table (5 seeded non-W2 lessons in migration
+      0001), per-user progress; list/detail/complete endpoints + web pages (tested).
+- [x] **T2.3** Investment schedule stubs — CRUD on planning rows only; every response
+      carries the no-custody notice; test asserts the table has no account/transfer
+      columns (bright line enforced in schema).
+- [x] **T2.4** Budget/tax dashboard — manual/import transactions, monthly rollup by
+      category, 28% educational tax set-aside estimate with gap math (tested).
+
+**Phase 2 deployable milestone reached.**
+
+## Next up (Phase 3 — LLC Formation Toolkit)
+
+- [ ] **T3.1** Business name check (format/distinguishability heuristics + LARA/USPTO links)
+- [ ] **T3.2** Articles of Organization generator (MI Form 700 → pre-filled PDF)
+- [ ] **T3.3** Operating Agreement + resident-agent guidance templates
+- [ ] **T3.4** EIN application flow (SS-4 guided)
+- [ ] **T3.5** Compliance disclaimers on every generated doc
 
 ## How to run
 

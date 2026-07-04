@@ -1,9 +1,12 @@
 import {
   bigint,
   boolean,
+  date,
   index,
+  integer,
   jsonb,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uuid,
@@ -71,6 +74,97 @@ export const kycInquiries = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("kyc_inquiries_user_idx").on(t.userId)],
+);
+
+export const onboardingProfiles = pgTable("onboarding_profiles", {
+  userId: uuid("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  persona: text("persona", {
+    enum: ["gig_worker", "creator", "freelancer", "small_business", "investor", "other"],
+  }),
+  incomeBand: text("income_band", {
+    enum: ["under_30k", "30k_75k", "75k_150k", "150k_500k", "500k_1m", "1m_3m", "over_3m"],
+  }),
+  goals: jsonb("goals").notNull().default([]),
+  homeState: text("home_state"),
+  currentStep: integer("current_step").notNull().default(0),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const lessons = pgTable("lessons", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(),
+  title: text("title").notNull(),
+  summary: text("summary").notNull(),
+  bodyMd: text("body_md").notNull(),
+  sortOrder: integer("sort_order").notNull(),
+});
+
+export const lessonProgress = pgTable(
+  "lesson_progress",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    lessonId: uuid("lesson_id")
+      .notNull()
+      .references(() => lessons.id, { onDelete: "cascade" }),
+    completedAt: timestamp("completed_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.lessonId] })],
+);
+
+export const investmentSchedules = pgTable(
+  "investment_schedules",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    cadence: text("cadence", { enum: ["weekly", "biweekly", "monthly"] }).notNull(),
+    amountCents: integer("amount_cents").notNull(),
+    target: text("target", {
+      enum: ["emergency_fund", "index_fund", "retirement", "real_estate", "custom"],
+    }).notNull(),
+    startsOn: date("starts_on").notNull(),
+    active: boolean("active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("investment_schedules_user_idx").on(t.userId)],
+);
+
+export const budgetTransactions = pgTable(
+  "budget_transactions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    occurredOn: date("occurred_on").notNull(),
+    description: text("description").notNull(),
+    amountCents: bigint("amount_cents", { mode: "number" }).notNull(),
+    category: text("category", {
+      enum: [
+        "income",
+        "housing",
+        "food",
+        "transportation",
+        "business",
+        "healthcare",
+        "taxes",
+        "savings",
+        "entertainment",
+        "other",
+      ],
+    }).notNull(),
+    source: text("source", { enum: ["manual", "import"] }).notNull().default("manual"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("budget_transactions_user_date_idx").on(t.userId, t.occurredOn)],
 );
 
 export const auditLog = pgTable("audit_log", {

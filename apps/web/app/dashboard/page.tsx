@@ -72,6 +72,18 @@ export default function DashboardPage() {
         </button>
       )}
       {notice && <p style={{ color: "#ffd27f" }}>{notice}</p>}
+
+      <h2 style={{ marginTop: "2rem" }}>Your toolkit</h2>
+      <ul style={{ lineHeight: 2 }}>
+        <li><a href="/onboarding" style={{ color: "#3ecf8e" }}>Onboarding</a> — tell us how you earn</li>
+        <li><a href="/lessons" style={{ color: "#3ecf8e" }}>Financial literacy</a> — lessons for non-W2 earners</li>
+        <li><a href="/budget" style={{ color: "#3ecf8e" }}>Budget & tax</a> — track spend, tax set-aside</li>
+        <li><a href="/invest" style={{ color: "#3ecf8e" }}>Investment schedules</a> — plan (SpendWHERE never moves funds)</li>
+        <li><a href="/llc" style={{ color: "#3ecf8e" }}>LLC toolkit</a> — Michigan formation, step by step</li>
+        <li><a href="/vault" style={{ color: "#3ecf8e" }}>Document vault</a> — encrypted storage</li>
+        <li><a href="/calendar" style={{ color: "#3ecf8e" }}>Compliance calendar</a> — deadlines & reminders</li>
+      </ul>
+
       <p style={{ marginTop: "2rem", fontSize: "0.9rem", color: "#9db8ab" }}>
         MFA: {user.mfaEnabled ? "enabled" : "not enabled"} · {user.email}
       </p>

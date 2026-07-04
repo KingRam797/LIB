@@ -61,11 +61,15 @@ async function provisionAppRole(client: pg.Client, password: string): Promise<vo
   const db = (await client.query("SELECT current_database() AS db")).rows[0].db as string;
   await client.query(`GRANT CONNECT ON DATABASE "${db}" TO spendwhere_app`);
   await client.query("GRANT USAGE ON SCHEMA public TO spendwhere_app");
+  // Blanket CRUD (every user-scoped table is RLS-protected), then tighten the
+  // exceptions: migrations bookkeeping is off-limits, the audit log is
+  // append-only (INSERT+SELECT), and lesson content is read-only.
   await client.query(
-    "GRANT SELECT, INSERT, UPDATE, DELETE ON users, refresh_tokens, sensitive_profiles, kyc_inquiries TO spendwhere_app",
+    "GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO spendwhere_app",
   );
-  // Audit log is append-only for the app role: INSERT + SELECT, never UPDATE/DELETE.
-  await client.query("GRANT SELECT, INSERT ON audit_log TO spendwhere_app");
+  await client.query("REVOKE ALL ON _migrations FROM spendwhere_app");
+  await client.query("REVOKE UPDATE, DELETE ON audit_log FROM spendwhere_app");
+  await client.query("REVOKE INSERT, UPDATE, DELETE ON lessons FROM spendwhere_app");
 }
 
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];

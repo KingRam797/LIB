@@ -5,8 +5,12 @@ import rateLimit from "@fastify/rate-limit";
 import Fastify, { type FastifyInstance } from "fastify";
 import type { AppContext } from "./context.js";
 import { authRoutes } from "./routes/auth.js";
+import { budgetRoutes } from "./routes/budget.js";
+import { investRoutes } from "./routes/invest.js";
 import { kycRoutes } from "./routes/kyc.js";
+import { lessonsRoutes } from "./routes/lessons.js";
 import { meRoutes } from "./routes/me.js";
+import { onboardingRoutes } from "./routes/onboarding.js";
 
 export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   const app = Fastify({
@@ -34,6 +38,10 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   await app.register(async (scope) => authRoutes(scope, ctx));
   await app.register(async (scope) => meRoutes(scope, ctx));
   await app.register(async (scope) => kycRoutes(scope, ctx));
+  await app.register(async (scope) => onboardingRoutes(scope, ctx));
+  await app.register(async (scope) => lessonsRoutes(scope, ctx));
+  await app.register(async (scope) => investRoutes(scope, ctx));
+  await app.register(async (scope) => budgetRoutes(scope, ctx));
 
   return app;
 }
