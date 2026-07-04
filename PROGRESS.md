@@ -72,13 +72,31 @@
 
 **Phase 2 deployable milestone reached.**
 
-## Next up (Phase 3 — LLC Formation Toolkit)
+## Phase 3 — LLC Formation Toolkit (Michigan)
 
-- [ ] **T3.1** Business name check (format/distinguishability heuristics + LARA/USPTO links)
-- [ ] **T3.2** Articles of Organization generator (MI Form 700 → pre-filled PDF)
-- [ ] **T3.3** Operating Agreement + resident-agent guidance templates
-- [ ] **T3.4** EIN application flow (SS-4 guided)
-- [ ] **T3.5** Compliance disclaimers on every generated doc
+- [x] **T3.1** Name check — format rules (LLC designator per MCL 450.4204, restricted
+      words, corp-word conflicts), LARA-style distinguishable-name normalization, and
+      direct LARA + USPTO search links. Explicit "does not confirm availability"
+      disclaimer (LARA has no public API; user runs the authoritative search).
+- [x] **T3.2** Articles of Organization — mirrors LARA form CSCL/CD-700 (Articles I–IV,
+      organizer signature block, $50 filing instructions); refuses with a missing-field
+      list until required fields exist; downloadable PDF (pdf-lib, no external services).
+- [x] **T3.3** Operating agreement (member-managed, separateness clause) + resident-agent
+      guidance PDF + machine-readable template catalog at /llc/templates.
+- [x] **T3.4** SS-4/EIN prepared-answers PDF with IRS online-assistant link and
+      Third-Party Designee explanation. SSN is never stored on the LLC profile and never
+      submitted by SpendWHERE.
+- [x] **T3.5** LEGAL_DISCLAIMER stamped as the final section of every generated PDF
+      (tested on all four docs) + x-spendwhere-disclaimer response header.
+
+**Phase 3 deployable milestone reached.**
+
+## Next up (Phase 4 — Document Vault + Compliance Calendar)
+
+- [ ] **T4.1** Encrypted document vault (storage abstraction, AES-256, per-user isolation)
+- [ ] **T4.2** Document classification/tagging + search
+- [ ] **T4.3** Compliance calendar (MI Annual Statement Feb 15 etc.; reminders fire)
+- [ ] **T4.4** Audit export + data-subject access/delete (CCPA-ready)
 
 ## How to run
 

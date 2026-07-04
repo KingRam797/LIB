@@ -9,6 +9,7 @@ import { budgetRoutes } from "./routes/budget.js";
 import { investRoutes } from "./routes/invest.js";
 import { kycRoutes } from "./routes/kyc.js";
 import { lessonsRoutes } from "./routes/lessons.js";
+import { llcRoutes } from "./routes/llc.js";
 import { meRoutes } from "./routes/me.js";
 import { onboardingRoutes } from "./routes/onboarding.js";
 
@@ -42,6 +43,7 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   await app.register(async (scope) => lessonsRoutes(scope, ctx));
   await app.register(async (scope) => investRoutes(scope, ctx));
   await app.register(async (scope) => budgetRoutes(scope, ctx));
+  await app.register(async (scope) => llcRoutes(scope, ctx));
 
   return app;
 }

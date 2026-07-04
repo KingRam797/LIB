@@ -167,6 +167,38 @@ export const budgetTransactions = pgTable(
   (t) => [index("budget_transactions_user_date_idx").on(t.userId, t.occurredOn)],
 );
 
+export const llcProfiles = pgTable("llc_profiles", {
+  userId: uuid("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  entityName: text("entity_name"),
+  purpose: text("purpose")
+    .notNull()
+    .default(
+      "To engage in any activity within the purposes for which a limited liability company may be formed under the Michigan Limited Liability Company Act.",
+    ),
+  duration: text("duration").notNull().default("perpetual"),
+  residentAgentName: text("resident_agent_name"),
+  registeredOfficeStreet: text("registered_office_street"),
+  registeredOfficeCity: text("registered_office_city"),
+  registeredOfficeZip: text("registered_office_zip"),
+  mailingStreet: text("mailing_street"),
+  mailingCity: text("mailing_city"),
+  mailingZip: text("mailing_zip"),
+  organizerName: text("organizer_name"),
+  organizerAddress: text("organizer_address"),
+  management: text("management", { enum: ["member_managed", "manager_managed"] })
+    .notNull()
+    .default("member_managed"),
+  memberNames: jsonb("member_names").notNull().default([]),
+  formedOn: date("formed_on"),
+  responsiblePartyName: text("responsible_party_name"),
+  principalActivity: text("principal_activity"),
+  expectedEmployees: integer("expected_employees"),
+  businessStartDate: date("business_start_date"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const auditLog = pgTable("audit_log", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
   occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull().defaultNow(),
