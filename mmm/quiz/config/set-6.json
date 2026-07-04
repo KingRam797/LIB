@@ -1,0 +1,99 @@
+{
+  "$note": "Mmm! launch quiz — 6 questions, LOCKED (build plan §5). Every question must change a recommendation. The quiz engine reads this config; swapping in set-10.json at the 100-bottle A/B requires no rewrite. Answer values feed engine/rules.ts (deterministic) and Klaviyo profile properties (integrations/klaviyo.ts MmmProfileProperties).",
+  "version": "set-6",
+  "maxSeconds": 90,
+  "emailGate": "after_last_question",
+  "questions": [
+    {
+      "id": "primary_goal",
+      "order": 1,
+      "prompt": "What matters most to your mornings right now?",
+      "type": "single",
+      "affects": "goal → add-on SKU mapping (stress/sleep → AAH; focus → OOO; joints → TASTY)",
+      "options": [
+        { "value": "energy", "label": "Steadier energy" },
+        { "value": "stress", "label": "A calmer baseline" },
+        { "value": "sleep", "label": "Winding down, resting well" },
+        { "value": "focus", "label": "Sharper focus" },
+        { "value": "joints", "label": "Moving comfortably" },
+        { "value": "general", "label": "Covering my bases" }
+      ]
+    },
+    {
+      "id": "secondary_goal",
+      "order": 2,
+      "prompt": "Anything else you'd like your mornings to work on?",
+      "type": "single",
+      "optional": true,
+      "affects": "second add-on SKU; ties archetype",
+      "options": [
+        { "value": "energy", "label": "Steadier energy" },
+        { "value": "stress", "label": "A calmer baseline" },
+        { "value": "sleep", "label": "Winding down, resting well" },
+        { "value": "focus", "label": "Sharper focus" },
+        { "value": "joints", "label": "Moving comfortably" },
+        { "value": "none", "label": "Just the one, thanks" }
+      ]
+    },
+    {
+      "id": "diet",
+      "order": 3,
+      "prompt": "How do you usually eat?",
+      "type": "single",
+      "affects": "Omega-3 sourcing + B12 logic (vegan → OOO algae-based + B12 emphasis)",
+      "options": [
+        { "value": "omnivore", "label": "A bit of everything" },
+        { "value": "vegetarian", "label": "Vegetarian" },
+        { "value": "vegan", "label": "Vegan" }
+      ]
+    },
+    {
+      "id": "sun_exposure",
+      "order": 4,
+      "prompt": "How much daylight do you actually get?",
+      "type": "single",
+      "affects": "vitamin D dose within Class A ceiling",
+      "options": [
+        { "value": "outdoor", "label": "Outside most days" },
+        { "value": "mixed", "label": "Some in, some out" },
+        { "value": "indoor", "label": "Mostly indoors" }
+      ]
+    },
+    {
+      "id": "about_you",
+      "order": 5,
+      "prompt": "A little about you — so the doses fit.",
+      "type": "composite",
+      "affects": "RDA baselines (age band + biological sex)",
+      "fields": [
+        {
+          "id": "age_band",
+          "label": "Age",
+          "options": ["18-29", "30-39", "40-49", "50-64", "65+"]
+        },
+        {
+          "id": "biological_sex",
+          "label": "Biological sex",
+          "options": [
+            { "value": "female", "label": "Female" },
+            { "value": "male", "label": "Male" },
+            { "value": "prefer_not_to_say", "label": "Prefer not to say" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sensitivities",
+      "order": 6,
+      "prompt": "Any sensitivities, or taking any medication?",
+      "type": "single",
+      "affects": "gates to provider-first copy; softens recommendation",
+      "options": [
+        { "value": "none", "label": "Nope, all clear" },
+        { "value": "yes", "label": "Yes" },
+        { "value": "unsure", "label": "Not sure" }
+      ],
+      "providerFirstValues": ["yes", "unsure"]
+    }
+  ]
+}

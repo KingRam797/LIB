@@ -1,0 +1,28 @@
+{% comment %}
+  Mmm! — DSHEA disclaimer partial. COMPLIANCE-CRITICAL (build principle #5).
+
+  Must render on: every PDP, the quiz result, cart/checkout upsell surfaces,
+  and every email footer (Klaviyo carries its own copy of this string —
+  keep them identical).
+
+  Usage:
+    {% render 'mmm-disclaimer' %}
+    {% render 'mmm-disclaimer', provider_note: true %}   <- adds the provider line;
+       required on every recommendation surface (quiz result, personalized PDP blocks).
+
+  Do not shrink below .mmm-fine-print size, hide behind a toggle, or lighten
+  the color past --mmm-ink-soft. Visible means visible.
+{% endcomment %}
+
+<div class="mmm-fine-print mmm-disclaimer" data-mmm-disclaimer>
+  <p>
+    These statements have not been evaluated by the Food and Drug Administration.
+    This product is not intended to diagnose, treat, cure, or prevent any disease.
+  </p>
+  {%- if provider_note -%}
+    <p>
+      Mmm! is not a substitute for professional advice. Talk to your provider if
+      you&rsquo;re pregnant, on medication, or managing a condition.
+    </p>
+  {%- endif -%}
+</div>

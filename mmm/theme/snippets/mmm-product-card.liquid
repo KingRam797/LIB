@@ -1,0 +1,72 @@
+{% comment %}
+  Mmm! — product card. Reusable on collection grids, quiz results, and
+  "complete your ritual" cross-sells.
+
+  Usage:
+    {% render 'mmm-product-card', product: product %}
+    {% render 'mmm-product-card', product: product, note: 'Picked for your mornings' %}
+
+  The card pulls the SKU code from the first variant's SKU (MMM / OOO / AAH /
+  TASTY) to apply the per-SKU accent from mmm-brand.css. Copy on the card comes
+  from product metafields (structure/function claims only — see §6):
+    product.metafields.mmm.role_line  — one warm line, e.g. "Everyone's floor."
+{% endcomment %}
+
+{%- assign sku_code = product.selected_or_first_available_variant.sku | upcase -%}
+
+<article class="mmm-card mmm-product-card" data-mmm-sku="{{ sku_code }}">
+  <a href="{{ product.url }}" class="mmm-product-card__media">
+    {%- if product.featured_image -%}
+      {{ product.featured_image | image_url: width: 640 | image_tag: loading: 'lazy', alt: product.featured_image.alt | default: product.title }}
+    {%- endif -%}
+  </a>
+
+  <h3 class="mmm-product-card__title">
+    <a href="{{ product.url }}">{{ product.title }}</a>
+  </h3>
+
+  {%- if product.metafields.mmm.role_line -%}
+    <p class="mmm-product-card__role">{{ product.metafields.mmm.role_line }}</p>
+  {%- endif -%}
+
+  {%- if note -%}
+    <p class="mmm-product-card__note">{{ note }}</p>
+  {%- endif -%}
+
+  <div class="mmm-product-card__foot">
+    <span class="mmm-product-card__price">
+      {{ product.price | money }}<span class="mmm-product-card__cadence">/mo</span>
+    </span>
+    <a href="{{ product.url }}" class="mmm-btn mmm-btn--primary">Start the ritual</a>
+  </div>
+</article>
+
+{% stylesheet %}
+.mmm-product-card {
+  display: grid;
+  gap: var(--mmm-space-3);
+  border-top: 3px solid var(--mmm-sku-accent, var(--mmm-sunrise));
+}
+.mmm-product-card__media img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--mmm-radius-md);
+}
+.mmm-product-card__title { font-size: 1.5rem; margin: 0; }
+.mmm-product-card__title a { color: inherit; text-decoration: none; }
+.mmm-product-card__role { margin: 0; color: var(--mmm-ink-soft); }
+.mmm-product-card__note {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--mmm-violet-deep);
+}
+.mmm-product-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mmm-space-3);
+  margin-top: var(--mmm-space-2);
+}
+.mmm-product-card__price { font-weight: 700; font-size: 1.125rem; }
+.mmm-product-card__cadence { font-weight: 400; color: var(--mmm-ink-soft); font-size: 0.875rem; }
+{% endstylesheet %}
