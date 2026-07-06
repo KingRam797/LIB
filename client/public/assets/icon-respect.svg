@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="#3E2F25" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- open hand lifting: palm arc + four fingers + rising mote -->
+  <path d="M10 34c0 5 5 8 14 8s14-3 14-8"/>
+  <path d="M12 34v-9"/>
+  <path d="M19 33v-13"/>
+  <path d="M26 33v-13"/>
+  <path d="M33 33v-9"/>
+  <path d="M12 25c0-2 1.5-3.5 3.5-3.5S19 23 19 25"/>
+  <circle cx="24" cy="10" r="2.4"/>
+  <path d="M24 14.5v2.5"/>
+</svg>
