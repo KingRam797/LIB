@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { all } from '../db/index.js';
+import { ah, bad } from '../lib/http.js';
 const r = Router();
 // Day types map to seeded day_plans; meals assembled to hit ~2,700 kcal / ~160 g protein.
-r.get('/exercises', async (_q,res)=> res.json(await all('SELECT * FROM workouts ORDER BY muscle_group')));
-r.get('/week', async (_q,res)=> res.json(await all('SELECT * FROM day_plans')));
-r.post('/generate', async (req, res) => {
-  const { dayType, goal = 'endurance+lean-muscle' } = req.body;
+r.get('/exercises', ah(async (_q,res)=> res.json(await all('SELECT * FROM workouts ORDER BY muscle_group'))));
+r.get('/week', ah(async (_q,res)=> res.json(await all('SELECT * FROM day_plans'))));
+r.post('/generate', ah(async (req, res) => {
+  const { dayType, goal = 'endurance+lean-muscle' } = req.body || {};
+  if (typeof dayType !== 'string' || !dayType) return bad(res, 'dayType is required');
   const plan = (await all('SELECT * FROM day_plans WHERE day_type=?', [dayType]))[0];
   const meals = await all('SELECT * FROM meals ORDER BY slot');
   // Pick one meal per slot to build a ~2,700 kcal / ~160 g protein day.
@@ -18,5 +20,5 @@ r.post('/generate', async (req, res) => {
     meals: chosen, totals,
     pillars: 'RESPECT the body you were given. RETURN to it daily. Make it RITUAL.'
   });
-});
+}));
 export default r;

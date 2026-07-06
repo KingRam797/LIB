@@ -1,9 +1,14 @@
-import { run } from '../db/index.js';
+import { get, run } from '../db/index.js';
 import { FACT_CARDS } from './factcards.js';
 import { EXERCISES, DAY_PLANS, MEALS } from './fitness.js';
 import { LIB_DOCS } from './lib.js';
 
 export async function seed() {
+  // Idempotent: re-running db:init must not duplicate rows or crash on the
+  // pursuits UNIQUE key. Pursuits mark whether seeding already happened.
+  const seeded = await get('SELECT id FROM pursuits LIMIT 1');
+  if (seeded) { console.log('Seed already present; skipping.'); return; }
+
   const pursuits = [
     ['mmm','MMM! multivitamin launch'],['spendwhere','SpendWHERE fintech'],
     ['voice','Voice architecture MRR'],['xrp','XRP position'],
@@ -42,12 +47,13 @@ export async function seed() {
     await run('INSERT INTO day_plans (day_type,goal,blocks_json) VALUES (?,?,?)',
       [d.day_type, d.goal, JSON.stringify(d.blocks)]);
   for (const doc of LIB_DOCS) {
-    const res = await run('INSERT INTO lib_docs (title,pursuit_tag,updated_at) VALUES (?,?,?)',
+    // RETURNING works on both engines (SQLite >= 3.35 and Postgres), unlike
+    // sqlite-only lastInsertRowid.
+    const row = await get('INSERT INTO lib_docs (title,pursuit_tag,updated_at) VALUES (?,?,?) RETURNING id',
       [doc.title, doc.pursuit, '2026-07-01']);
-    const id = res.lastInsertRowid ?? res.rows?.[0]?.id ?? doc.id;
     let ord = 0;
     for (const s of doc.sections)
       await run('INSERT INTO lib_sections (doc_id,heading,body_md,ord) VALUES (?,?,?,?)',
-        [id, s.heading, s.body, ord++]);
+        [row.id, s.heading, s.body, ord++]);
   }
 }

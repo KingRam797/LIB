@@ -63,7 +63,7 @@ sudo -u postgres psql -c "CREATE USER king WITH ENCRYPTED PASSWORD 'CHANGE_ME';"
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE counting_house TO king;"
 # 4. Clone + build
 git clone <origin-url> && cd counting-house
-cp .env.example .env      # set DB_CLIENT=pg and the DATABASE_URL
+cp .env.example .env      # set DB_CLIENT=pg, the DATABASE_URL, and APP_TOKEN (required in prod)
 npm install
 npm run build --workspace client
 DB_CLIENT=pg npm run db:init
