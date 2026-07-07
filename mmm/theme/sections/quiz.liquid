@@ -1,0 +1,38 @@
+{% comment %}
+  Mmm! — quiz section. PHASE 2 — placeholder only.
+
+  Phase 2 builds this as the quiz UI (schema: quiz/config/set-6.json —
+  6 questions, LOCKED for launch, config-swappable for the 10-question A/B
+  at the 100-bottle milestone). The quiz feeds the deterministic rules
+  engine (engine/rules.ts); this section never computes a dose.
+
+  Until Phase 2, this renders a simple email-capture teaser so the homepage
+  can link somewhere real.
+{% endcomment %}
+
+<section class="mmm-quiz-teaser mmm-card">
+  <h2>{{ section.settings.heading }}</h2>
+  <p>{{ section.settings.body }}</p>
+  {% render 'mmm-disclaimer', provider_note: true %}
+</section>
+
+{% schema %}
+{
+  "name": "Mmm! Quiz (Phase 2)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The quiz is almost ready."
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body",
+      "default": "Six questions, under two minutes, and your morning stack is built around your answers. Coming very soon."
+    }
+  ],
+  "presets": [{ "name": "Mmm! Quiz (Phase 2)" }]
+}
+{% endschema %}
