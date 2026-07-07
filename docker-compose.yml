@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: spendwhere
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d spendwhere"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  vault:
+    image: hashicorp/vault:1.18
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: dev-only-token
+    ports:
+      - "8200:8200"
+    cap_add:
+      - IPC_LOCK
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      CORS_ORIGIN: http://localhost:3000
+      DATABASE_URL: postgres://spendwhere_app:${APP_DB_PASSWORD:-app-dev-password}@postgres:5432/spendwhere
+      ADMIN_DATABASE_URL: postgres://postgres:postgres@postgres:5432/spendwhere
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:-app-dev-password}
+      JWT_SECRET: ${JWT_SECRET:-dev-only-jwt-secret-change-in-production}
+      FIELD_ENCRYPTION_KEY: ${FIELD_ENCRYPTION_KEY:?run `openssl rand -base64 32` and set FIELD_ENCRYPTION_KEY}
+    command: sh -c "node apps/api/dist/db/migrate.js && node apps/api/dist/server.js"
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  postgres-data:
