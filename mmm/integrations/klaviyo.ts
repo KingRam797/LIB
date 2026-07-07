@@ -30,6 +30,15 @@ export interface KlaviyoClientConfig {
   apiKey: string; // KLAVIYO_PRIVATE_KEY
 }
 
+/** Read config from the environment (see integrations/env.ts + .env.example). */
+export function configFromEnv(env: NodeJS.ProcessEnv = process.env): KlaviyoClientConfig {
+  const apiKey = env.KLAVIYO_PRIVATE_KEY;
+  if (!apiKey) {
+    throw new Error('Missing KLAVIYO_PRIVATE_KEY — see .env.example at the repo root.');
+  }
+  return { apiKey };
+}
+
 export class KlaviyoClient {
   constructor(private readonly config: KlaviyoClientConfig) {
     void this.config;

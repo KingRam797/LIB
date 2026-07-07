@@ -1,0 +1,16 @@
+# Secrets — never commit real keys. .env.local at this root is read by
+# mmm/integrations/env.ts locally; in production the same keys are set in
+# the Vercel/Shopify dashboards.
+.env
+.env.*
+!.env.example
+
+# Dependencies & build output
+node_modules/
+dist/
+*.log
+
+# Editor/OS noise
+.DS_Store
+.vscode/
+.idea/

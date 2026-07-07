@@ -21,6 +21,15 @@ export interface RechargeClientConfig {
   apiToken: string; // RECHARGE_API_TOKEN
 }
 
+/** Read config from the environment (see integrations/env.ts + .env.example). */
+export function configFromEnv(env: NodeJS.ProcessEnv = process.env): RechargeClientConfig {
+  const apiToken = env.RECHARGE_API_TOKEN;
+  if (!apiToken) {
+    throw new Error('Missing RECHARGE_API_TOKEN — see .env.example at the repo root.');
+  }
+  return { apiToken };
+}
+
 export class RechargeClient {
   constructor(private readonly config: RechargeClientConfig) {
     void this.config;
