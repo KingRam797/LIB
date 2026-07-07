@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mmm! — Your morning, made for you</title>
+<meta name="description" content="A two-minute quiz. A daily vitamin stack built around your goals. Delivered before you run out — that's the whole trick.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Hanken+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* Mmm! brand system — mirrors theme/config/tokens.json */
+  :root {
+    --sunrise: #f4772e;
+    --sunrise-deep: #d95f1b;
+    --green: #3e9b6e;
+    --green-deep: #2e7a55;
+    --violet: #9c8cd9;
+    --violet-deep: #6f5dbb;
+    --bg: #fdf8f1;
+    --bg-raised: #fffdfa;
+    --ink: #33302b;
+    --ink-soft: #6b655c;
+    --line: #e8dfd3;
+    --font-display: "Fraunces", Georgia, serif;
+    --font-body: "Hanken Grotesk", -apple-system, "Segoe UI", sans-serif;
+    --radius-md: 0.75rem;
+    --radius-lg: 1.25rem;
+    --shadow-card: 0 1px 2px rgba(51,48,43,.06), 0 4px 16px rgba(51,48,43,.07);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+  }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.1; }
+  a { color: inherit; }
+  .wrap { max-width: 64rem; margin: 0 auto; padding: 0 1.5rem; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: .85rem 1.75rem; border-radius: 999px; border: 1px solid transparent;
+    font: 700 1rem var(--font-body); cursor: pointer; text-decoration: none;
+    transition: background-color .14s ease, transform .14s ease;
+  }
+  .btn--primary { background: var(--sunrise); color: var(--bg-raised); }
+  .btn--primary:hover { background: var(--sunrise-deep); transform: translateY(-1px); }
+  .btn--quiet { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn--quiet:hover { border-color: var(--ink-soft); }
+
+  header.site {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.25rem 1.5rem; max-width: 64rem; margin: 0 auto;
+  }
+  .logo { font: 600 1.6rem var(--font-display); color: var(--sunrise-deep); text-decoration: none; }
+
+  .hero {
+    background: linear-gradient(160deg, var(--bg) 55%, #fbeadb 100%);
+    padding: 5rem 1.5rem 4rem; text-align: center;
+  }
+  .hero h1 { font-size: clamp(2.25rem, 6vw, 3.5rem); margin-bottom: 1rem; }
+  .hero p {
+    font-size: 1.125rem; color: var(--ink-soft);
+    max-width: 34rem; margin: 0 auto 2rem;
+  }
+  .hero .actions { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+  .hero .note { margin-top: 1rem; font-size: .875rem; color: var(--ink-soft); }
+
+  section { padding: 4rem 0; }
+  .section-title { text-align: center; font-size: 2rem; margin-bottom: 2.5rem; }
+
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1.5rem; }
+  .card {
+    background: var(--bg-raised); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 1.5rem;
+  }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2.25rem; height: 2.25rem; border-radius: 999px;
+    background: var(--sunrise); color: var(--bg-raised); font-weight: 700;
+  }
+  .card h3 { font-size: 1.4rem; margin: .75rem 0 .5rem; }
+  .card p { color: var(--ink-soft); }
+
+  .skus { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1.5rem; }
+  .sku { border-top: 4px solid var(--accent, var(--sunrise)); }
+  .sku .actives {
+    font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--accent, var(--sunrise));
+  }
+  .sku h3 { font-size: 1.75rem; margin: .25rem 0 .5rem; }
+  .sku p { color: var(--ink-soft); font-size: .95rem; }
+  .sku--mmm { --accent: var(--sunrise); }
+  .sku--ooo { --accent: var(--green-deep); }
+  .sku--aah { --accent: var(--violet-deep); }
+  .sku--tasty { --accent: var(--sunrise-deep); }
+
+  .offer { background: var(--bg-raised); border-block: 1px solid var(--line); text-align: center; }
+  .offer h2 { font-size: 2rem; margin-bottom: .75rem; }
+  .offer p { color: var(--ink-soft); max-width: 38rem; margin: 0 auto .5rem; }
+
+  footer {
+    padding: 3rem 1.5rem; text-align: center;
+    border-top: 1px solid var(--line); color: var(--ink-soft); font-size: .875rem;
+  }
+  .fine-print { font-size: .75rem; line-height: 1.5; max-width: 44rem; margin: 1rem auto 0; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <a class="logo" href="/">Mmm!</a>
+  <a class="btn btn--quiet" href="#quiz">Take the quiz</a>
+</header>
+
+<section class="hero">
+  <h1>Your morning, made for you.</h1>
+  <p>A two-minute quiz. A daily stack built around your goals. Delivered before you run out — that's the whole trick.</p>
+  <div class="actions">
+    <a class="btn btn--primary" href="#quiz">Build my ritual</a>
+    <a class="btn btn--quiet" href="#the-four">Meet the four</a>
+  </div>
+  <p class="note">Six questions. Under two minutes. No account needed.</p>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2 class="section-title">Three steps. Then it's just mornings.</h2>
+    <div class="steps">
+      <div class="card">
+        <span class="step-num">1</span>
+        <h3>Tell us about you</h3>
+        <p>Six questions, under two minutes. Your goals, your diet, your mornings.</p>
+      </div>
+      <div class="card">
+        <span class="step-num">2</span>
+        <h3>Meet your stack</h3>
+        <p>A right-dosed daily lineup, built from your answers. Here's exactly what's in it — and why.</p>
+      </div>
+      <div class="card">
+        <span class="step-num">3</span>
+        <h3>Stack it with your coffee</h3>
+        <p>Same time, same place, every day. We handle the remembering; skip anytime, no hard feelings.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="the-four">
+  <div class="wrap">
+    <h2 class="section-title">The four. Your stack starts here.</h2>
+    <div class="skus">
+      <div class="card sku sku--mmm">
+        <span class="actives">Multivitamin base</span>
+        <h3>Mmm</h3>
+        <p>Everyone's floor. The daily foundation, right-dosed.</p>
+      </div>
+      <div class="card sku sku--ooo">
+        <span class="actives">Omega-3</span>
+        <h3>Ooo</h3>
+        <p>Supports heart, brain, and mood — the long game.</p>
+      </div>
+      <div class="card sku sku--aah">
+        <span class="actives">Ashwagandha</span>
+        <h3>Aah</h3>
+        <p>Helps maintain a sense of calm and supports the body's response to everyday stress.</p>
+      </div>
+      <div class="card sku sku--tasty">
+        <span class="actives">Turmeric</span>
+        <h3>Tasty</h3>
+        <p>Supports joint comfort, mobility, and a healthy inflammatory response.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="offer">
+  <div class="wrap">
+    <h2>Grab a round, keep one around.</h2>
+    <p>Your first round ships free. Your second round brings a bottle for the shelf — extra supply on hand, the ritual made easy to keep.</p>
+    <p><strong>The store opens soon.</strong></p>
+  </div>
+</section>
+
+<section id="quiz" style="text-align:center">
+  <div class="wrap">
+    <h2 class="section-title" style="margin-bottom:.75rem">The quiz is almost ready.</h2>
+    <p style="color:var(--ink-soft); max-width:36rem; margin:0 auto">
+      Six questions, under two minutes, and your morning stack is built around your answers. Coming very soon at mmm.co.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <p>Mmm! — Morning Motion Multivitamin · a PainOrPane Products company</p>
+  <p class="fine-print">
+    These statements have not been evaluated by the Food and Drug Administration.
+    This product is not intended to diagnose, treat, cure, or prevent any disease.
+    Mmm! is not a substitute for professional advice. Talk to your provider if you're
+    pregnant, on medication, or managing a condition.
+  </p>
+</footer>
+
+</body>
+</html>
